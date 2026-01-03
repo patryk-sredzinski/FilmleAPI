@@ -73,3 +73,4 @@ The Supabase `calendar` table should have the following structure:
 - `movie_id` (integer, TheMovieDB movie ID)
 
 
+
