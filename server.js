@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const language = 'pl-PL';
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Error: SUPABASE_URL and SUPABASE_ANON_KEY must be set in environment variables');
@@ -36,7 +37,7 @@ async function fetchMovieDetails(movieId) {
   const tmdbResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
     params: {
       api_key: TMDB_API_KEY,
-      language: 'en-US'
+      language: language
     }
   });
   return tmdbResponse.data;
@@ -117,7 +118,7 @@ app.get('/api/search', async (req, res) => {
       params: {
         api_key: TMDB_API_KEY,
         query: query,
-        language: 'en-US'
+        language: language
       }
     });
 
