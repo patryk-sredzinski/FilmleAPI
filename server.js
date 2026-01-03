@@ -31,6 +31,17 @@ if (!TMDB_API_KEY) {
 // Middleware
 app.use(express.json());
 
+// Helper function to fetch movie details from TheMovieDB
+async function fetchMovieDetails(movieId) {
+  const tmdbResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+    params: {
+      api_key: TMDB_API_KEY,
+      language: 'en-US'
+    }
+  });
+  return tmdbResponse.data;
+}
+
 // Health check endpoint
 app.get('/', (req, res) => {
   res.json({ message: 'FilmleAPI is running' });
@@ -65,17 +76,94 @@ app.get('/mystery_movie', async (req, res) => {
     const movieId = data.movie;
 
     // Fetch movie details from TheMovieDB API
-    const tmdbResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
-      params: {
-        api_key: TMDB_API_KEY,
-        language: 'en-US'
-      }
-    });
+    const movieDetails = await fetchMovieDetails(movieId);
 
     // Return the movie data
     res.json({
       date: currentDate,
-      movie: tmdbResponse.data
+      movie: movieDetails
+    });
+
+  } catch (error) {
+    if (error.response) {
+      // TheMovieDB API error
+      return res.status(error.response.status).json({
+        error: 'Failed to fetch movie from TheMovieDB',
+        details: error.response.data?.status_message || error.message
+      });
+    }
+    
+    res.status(500).json({
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+});
+
+// Search endpoint
+app.get('/search', async (req, res) => {
+  try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.status(400).json({
+        error: 'Query parameter is required',
+        example: '/search?query=batman'
+      });
+    }
+
+    // Search for movies in TheMovieDB API
+    const tmdbResponse = await axios.get(`${TMDB_BASE_URL}/search/movie`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        query: query,
+        language: 'en-US'
+      }
+    });
+
+    // Return the search results
+    res.json({
+      query: query,
+      results: tmdbResponse.data.results,
+      total_results: tmdbResponse.data.total_results,
+      page: tmdbResponse.data.page,
+      total_pages: tmdbResponse.data.total_pages
+    });
+
+  } catch (error) {
+    if (error.response) {
+      // TheMovieDB API error
+      return res.status(error.response.status).json({
+        error: 'Failed to search movies from TheMovieDB',
+        details: error.response.data?.status_message || error.message
+      });
+    }
+    
+    res.status(500).json({
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+});
+
+// Movie details endpoint
+app.get('/movie/:movie_id', async (req, res) => {
+  try {
+    const movieId = req.params.movie_id;
+
+    if (!movieId) {
+      return res.status(400).json({
+        error: 'Movie ID is required',
+        example: '/movie/550'
+      });
+    }
+
+    // Fetch movie details from TheMovieDB API
+    const movieDetails = await fetchMovieDetails(movieId);
+
+    // Return the movie data
+    res.json({
+      movie: movieDetails
     });
 
   } catch (error) {

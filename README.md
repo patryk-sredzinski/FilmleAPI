@@ -72,3 +72,4 @@ The Supabase `calendar` table should have the following structure:
 - `date` (date type, format: YYYY-MM-DD)
 - `movie_id` (integer, TheMovieDB movie ID)
 
+
