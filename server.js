@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
 });
 
 // Mystery movie endpoint
-app.get('/api/mystery_movie', async (req, res) => {
+app.get('/mystery_movie', async (req, res) => {
   try {
     // Get current date in YYYY-MM-DD format
     const currentDate = new Date().toISOString().split('T')[0];
