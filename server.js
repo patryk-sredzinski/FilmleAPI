@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
 });
 
 // Mystery movie endpoint
-app.get('/mystery_movie', async (req, res) => {
+app.get('/api/mystery_movie', async (req, res) => {
   try {
     // Get current date in YYYY-MM-DD format
     const currentDate = new Date().toISOString().split('T')[0];
@@ -101,7 +101,7 @@ app.get('/mystery_movie', async (req, res) => {
 });
 
 // Search endpoint
-app.get('/search', async (req, res) => {
+app.get('/api/search', async (req, res) => {
   try {
     const query = req.query.query;
 
@@ -147,7 +147,7 @@ app.get('/search', async (req, res) => {
 });
 
 // Movie details endpoint
-app.get('/movie/:movie_id', async (req, res) => {
+app.get('/api/movie/:movie_id', async (req, res) => {
   try {
     const movieId = req.params.movie_id;
 
