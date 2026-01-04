@@ -93,13 +93,12 @@ app.get('/api/mystery_movie', async (req, res) => {
     // Fetch movie details from TheMovieDB API
     const movieDetails = await fetchMovieDetails(movieId);
 
-    // Extract movie ID from data and keep all other fields
-    const { movie, ...supabaseFields } = data;
-
     // Return the movie data along with all Supabase fields
     res.json({
       date: currentDate,
-      ...supabaseFields,
+      quote_en: data.quote_en,
+      quote_pl: data.quote_pl,
+      description: data.description,
       movie: movieDetails
     });
 
