@@ -34,13 +34,27 @@ app.use(express.json());
 
 // Helper function to fetch movie details from TheMovieDB
 async function fetchMovieDetails(movieId) {
-  const tmdbResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
-    params: {
-      api_key: TMDB_API_KEY,
-      language: language
-    }
-  });
-  return tmdbResponse.data;
+  try {
+    // We fetch both endpoints simultaneously to save time
+    const [movieResponse, creditsResponse] = await Promise.all([
+      axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+        params: { api_key: TMDB_API_KEY, language: language }
+      }),
+      axios.get(`${TMDB_BASE_URL}/movie/${movieId}/credits`, {
+        params: { api_key: TMDB_API_KEY, language: language }
+      })
+    ]);
+
+    // Combine the movie data with the cast array
+    return {
+      ...movieResponse.data,
+      cast: creditsResponse.data.cast,
+      crew: creditsResponse.data.crew // Optional: includes directors, writers, etc.
+    };
+  } catch (error) {
+    console.error("Error fetching movie details:", error);
+    throw error;
+  }
 }
 
 // Health check endpoint

@@ -77,3 +77,5 @@ The Supabase `calendar` table should have the following structure:
 
 
 
+
+
