@@ -68,10 +68,10 @@ app.get('/api/mystery_movie', async (req, res) => {
     // Get current date in YYYY-MM-DD format
     const currentDate = new Date().toISOString().split('T')[0];
     
-    // Query Supabase for movie ID based on current date
+    // Query Supabase for movie ID and all other fields based on current date
     const { data, error } = await supabase
       .from('calendar')
-      .select('movie')
+      .select('*')
       .eq('date', currentDate)
       .maybeSingle();
 
@@ -93,9 +93,13 @@ app.get('/api/mystery_movie', async (req, res) => {
     // Fetch movie details from TheMovieDB API
     const movieDetails = await fetchMovieDetails(movieId);
 
-    // Return the movie data
+    // Extract movie ID from data and keep all other fields
+    const { movie, ...supabaseFields } = data;
+
+    // Return the movie data along with all Supabase fields
     res.json({
       date: currentDate,
+      ...supabaseFields,
       movie: movieDetails
     });
 
